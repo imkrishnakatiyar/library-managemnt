@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Transaction History — Bibliotheca{% endblock %}
+{% block page_title %}Transaction History{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Transaction History</h2>
+    <p>Complete log of all book issues and returns</p>
+  </div>
+</div>
+
+<div class="card">
+  {% if transactions %}
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Issued On</th>
+        <th>Due Date</th>
+        <th>Returned On</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in transactions %}
+      <tr class="{% if t.overdue %}overdue-row{% endif %}">
+        <td style="color:var(--muted); font-size:0.78rem; font-family:monospace">{{ t.id }}</td>
+        <td><strong style="font-size:0.875rem">{{ t.title }}</strong></td>
+        <td>
+          <div style="font-size:0.875rem">{{ t.name }}</div>
+          <div style="font-size:0.72rem; color:var(--muted)">#{{ t.member_id }}</div>
+        </td>
+        <td style="font-size:0.8rem; color:var(--muted)">{{ t.issued_on[:10] }}</td>
+        <td style="font-size:0.82rem">
+          {{ t.due_date }}
+          {% if t.overdue %}<span class="overdue-tag">Overdue</span>{% endif %}
+        </td>
+        <td style="font-size:0.8rem; color:var(--muted)">
+          {% if t.returned_on %}{{ t.returned_on[:10] }}{% else %}—{% endif %}
+        </td>
+        <td>
+          {% if t.status == 'issued' and t.overdue %}
+          <span class="badge badge-red">Overdue</span>
+          {% elif t.status == 'issued' %}
+          <span class="badge badge-gold">Issued</span>
+          {% else %}
+          <span class="badge badge-green">Returned</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="emoji">📋</div>
+    <p>No transactions recorded yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

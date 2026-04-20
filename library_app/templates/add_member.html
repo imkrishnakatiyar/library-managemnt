@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Add Member — Bibliotheca{% endblock %}
+{% block page_title %}Add Member{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Register New Member</h2>
+    <p>A unique Member ID will be auto-generated</p>
+  </div>
+  <a href="{{ url_for('members') }}" class="btn btn-outline">← Back to Members</a>
+</div>
+
+<div style="max-width:500px">
+  <div class="card">
+    <div class="card-header"><div class="card-title">Member Details</div></div>
+    <div style="padding:28px">
+      <form method="POST">
+        <div class="form-stack">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="name" required placeholder="e.g. Priya Sharma">
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" name="email" required placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" name="phone" placeholder="10-digit number">
+          </div>
+        </div>
+        <div style="margin-top:24px; display:flex; gap:12px">
+          <button type="submit" class="btn btn-primary">Register Member</button>
+          <a href="{{ url_for('members') }}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

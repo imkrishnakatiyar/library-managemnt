@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Book Catalogue — Bibliotheca{% endblock %}
+{% block page_title %}Book Catalogue{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('add_book') }}" class="btn btn-primary btn-sm">＋ Add Book</a>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Book Catalogue</h2>
+    <p>{{ books|length }} book{% if books|length != 1 %}s{% endif %} found</p>
+  </div>
+</div>
+
+<form method="GET" action="{{ url_for('catalogue') }}">
+  <div class="search-row">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" name="q" value="{{ query }}" placeholder="Search by title, author, or ISBN…">
+    </div>
+    <select name="genre" style="width:180px">
+      <option value="">All Genres</option>
+      {% for g in genres %}
+      <option value="{{ g.genre }}" {% if selected_genre == g.genre %}selected{% endif %}>{{ g.genre }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if query or selected_genre %}
+    <a href="{{ url_for('catalogue') }}" class="btn btn-outline">Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+<div class="card">
+  {% if books %}
+  <table>
+    <thead>
+      <tr>
+        <th>Title &amp; Author</th>
+        <th>ISBN</th>
+        <th>Genre</th>
+        <th>Year</th>
+        <th>Copies</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td>
+          <div style="font-weight:600; font-size:0.9rem">{{ book.title }}</div>
+          <div style="color:var(--muted); font-size:0.78rem; margin-top:2px">{{ book.author }}</div>
+        </td>
+        <td style="font-size:0.78rem; color:var(--muted); font-family:monospace">{{ book.isbn }}</td>
+        <td><span class="badge badge-gold">{{ book.genre or '—' }}</span></td>
+        <td style="color:var(--muted); font-size:0.85rem">{{ book.year or '—' }}</td>
+        <td>
+          <div class="copies-bar" title="{{ book.available_copies }}/{{ book.total_copies }} available">
+            {% for i in range(book.total_copies) %}
+              <div class="copy-dot {% if i >= book.available_copies %}unavailable{% endif %}"></div>
+            {% endfor %}
+            <span style="font-size:0.75rem; color:var(--muted); margin-left:4px">{{ book.available_copies }}/{{ book.total_copies }}</span>
+          </div>
+        </td>
+        <td>
+          {% if book.available_copies > 0 %}
+          <span class="badge badge-green">Available</span>
+          {% else %}
+          <span class="badge badge-red">All Issued</span>
+          {% endif %}
+        </td>
+        <td>
+          <div style="display:flex; gap:6px">
+            <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline btn-sm">Edit</a>
+            <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" onsubmit="return confirm('Delete this book?')">
+              <button type="submit" class="btn btn-danger btn-sm">Del</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="emoji">📭</div>
+    <p>No books found. Try a different search or <a href="{{ url_for('add_book') }}" style="color:var(--gold)">add a new book</a>.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Members — Bibliotheca{% endblock %}
+{% block page_title %}Members{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('add_member') }}" class="btn btn-primary btn-sm">＋ Add Member</a>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Library Members</h2>
+    <p>{{ members|length }} registered member{% if members|length != 1 %}s{% endif %}</p>
+  </div>
+</div>
+
+<div class="card">
+  {% if members %}
+  <table>
+    <thead>
+      <tr>
+        <th>Member ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Joined</th>
+        <th>Active Issues</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in members %}
+      <tr>
+        <td><span style="font-family:monospace; font-weight:600; color:var(--gold)">{{ m.member_id }}</span></td>
+        <td><strong>{{ m.name }}</strong></td>
+        <td style="color:var(--muted); font-size:0.85rem">{{ m.email }}</td>
+        <td style="color:var(--muted); font-size:0.85rem">{{ m.phone or '—' }}</td>
+        <td style="color:var(--muted); font-size:0.8rem">{{ m.joined_on[:10] }}</td>
+        <td>
+          {% if m.active_books > 0 %}
+          <span class="badge badge-gold">{{ m.active_books }} book{% if m.active_books != 1 %}s{% endif %}</span>
+          {% else %}
+          <span class="badge badge-muted">None</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="emoji">👥</div>
+    <p>No members yet. <a href="{{ url_for('add_member') }}" style="color:var(--gold)">Add your first member</a>.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
